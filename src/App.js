@@ -11,7 +11,8 @@ import {
 import Tabs from "./Tabs";
 import Form from "./Form";
 
-const serverUrl = "http://localhost:4031";
+// const serverUrl = "http://localhost:4031";
+const serverUrl = document.location.origin;
 
 function ScriptRunner({ script }) {
   const { options } = script;
@@ -68,6 +69,7 @@ const DynamicContent = ({ scripts }) => {
 };
 
 function App() {
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [scripts, setScripts] = useState({});
   const tabs = Object.keys(scripts).map((key) => {
@@ -76,11 +78,14 @@ function App() {
 
   useEffect(() => {
     // id, name, path
-    fetch(`${serverUrl}/commands.json`).then((response) => {
-      response.json().then((data) => {
-        setScripts(data);
+    fetch(`${serverUrl}/commands.json`)
+      .then((res) => res.json())
+      .then((data) => setScripts(data))
+      .catch((err) => {
+        console.log("caught fetch error");
+        setError(err.message);
+        console.log({ err });
       });
-    });
 
     // const fetchTabs = async () => {
     //   const response = [
@@ -102,8 +107,13 @@ function App() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
       <div className="mx-auto max-w-3xl">
+        {!tabs || (tabs.length === 0 && "Loading Webscripts...")}
+        {error && (
+          <div className="bg-red-400 text-white p-4 rounded-md">{error}</div>
+        )}
         {tabs && <Tabs tabs={tabs} onChange={navigate} />}
         <Routes>
+          <Route path="/" element={""} />
           <Route
             path="/:tabId"
             element={<DynamicContent scripts={scripts} />}
