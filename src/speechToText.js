@@ -1,4 +1,5 @@
-const AWS = require("aws-sdk");
+const { Polly, SynthesizeSpeechCommand } = require("@aws-sdk/client-polly");
+const { Readable } = require("stream");
 const fs = require("fs");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
@@ -27,9 +28,8 @@ const argv = yargs(hideBin(process.argv))
 const inputText = argv.text;
 const outputFilePath = argv.output;
 
-// Configure AWS SDK
-AWS.config.update({ region: "us-west-2" });
-const polly = new AWS.Polly({ apiVersion: "2016-06-10" });
+// Configure Polly client
+const polly = new Polly({ region: "us-west-2" });
 
 // Configure Polly request parameters
 const params = {
@@ -39,21 +39,30 @@ const params = {
   TextType: "text",
 };
 
-// Make a request to Amazon Polly
-polly.synthesizeSpeech(params, (err, data) => {
-  if (err) {
-    console.error("Error synthesizing speech:", err);
-  } else {
-    // Save the output to the specified file path
-    fs.writeFile(outputFilePath, data.AudioStream, (err) => {
-      if (err) {
-        console.error("Error writing to file:", err);
-      } else {
-        console.log(
-          "Text-to-speech conversion successful! Audio file saved to:",
-          outputFilePath
-        );
-      }
+const synthesizeSpeech = async () => {
+  try {
+    const command = new SynthesizeSpeechCommand(params);
+    const data = await polly.send(command);
+
+    // Convert the AudioStream to a Readable stream
+    const audioStream = Readable.from(data.AudioStream);
+
+    const writeStream = fs.createWriteStream(outputFilePath);
+    audioStream.pipe(writeStream);
+
+    writeStream.on("finish", () => {
+      console.log(
+        "Text-to-speech conversion successful! Audio file saved to:",
+        outputFilePath
+      );
     });
+
+    writeStream.on("error", (err) => {
+      console.error("Error writing to file:", err);
+    });
+  } catch (err) {
+    console.error("Error synthesizing speech:", err);
   }
-});
+};
+
+synthesizeSpeech();
