@@ -31,6 +31,11 @@ app.use((req, res, next) => {
 // serve the react app too
 app.use(express.static(path.join(__dirname, "build")));
 
+app.get(":scriptName", (req, res) => {
+  // serve index.html
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 app.get("/commands.json", (req, res) => {
   res.json(cachedScriptOptions);
 });

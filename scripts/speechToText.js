@@ -52,7 +52,7 @@ const synthesizeSpeech = async () => {
 
     writeStream.on("finish", () => {
       console.log(
-        "Text-to-speech conversion successful! Audio file saved to:",
+        "Text-to-speech conversion successful!\nAudio file saved to:",
         outputFilePath
       );
     });

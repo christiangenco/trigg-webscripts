@@ -11,8 +11,8 @@ import {
 import Tabs from "./Tabs";
 import Form from "./Form";
 
-const serverUrl = "http://localhost:4031";
-// const serverUrl = document.location.origin;
+// const serverUrl = "http://localhost:4031";
+const serverUrl = document.location.origin;
 
 function ScriptRunner({ script }) {
   const { options } = script;
