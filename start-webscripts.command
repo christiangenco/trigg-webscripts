@@ -1,6 +1,11 @@
 #!/bin/bash
 cd "$(dirname "$0")"
 
-# BUILD_PATH=./server/build npm run build
+echo "Updating"
+git pull
 
+echo "Building"
+BUILD_PATH=./server/build npm run build
+
+echo "Running (ctrl+C to exit)"
 /usr/local/bin/node server/server.js
