@@ -9,6 +9,7 @@
     "@aws-sdk/client-polly": "^3.328.0",
     "@aws-sdk/s3-request-presigner": "^3.328.0",
     "aws-sdk": "^2.1373.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "yargs-parser": "^21.1.1"
   }
 }
