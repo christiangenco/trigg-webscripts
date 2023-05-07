@@ -13,6 +13,7 @@ function parseHelpOutput(output) {
     const match = optionRegex.exec(line);
     if (match) {
       const [, shortOption, longOption, description, type] = match;
+      if (shortOption === "h" || longOption === "help") continue;
       options.push({
         alias: longOption,
         description: description.trim(),
@@ -57,7 +58,7 @@ async function getScriptOptions() {
       const filePath = path.join("./scripts", file);
       const helpOutput = await getHelpOutput(filePath);
       const commandLineOptions = parseHelpOutput(helpOutput);
-      scriptOptions[file] = commandLineOptions;
+      scriptOptions[file] = { filename: file, options: commandLineOptions };
     }
 
     return scriptOptions;

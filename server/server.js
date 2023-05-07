@@ -3,10 +3,21 @@ const getScriptOptions = require("./parseScripts");
 const { spawn } = require("child_process");
 const path = require("path");
 
+const bodyParser = require("body-parser");
+
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4031;
 
 let cachedScriptOptions;
+
+app.use(bodyParser.json());
+// Set the CORS headers on every response
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 // Get the script options when the server starts
 (async () => {
@@ -23,6 +34,8 @@ app.get("/commands.json", (req, res) => {
 
 app.post("/:scriptFilename.json", (req, res) => {
   const { scriptFilename } = req.params;
+  console.log({ body: req.body, query: req.query });
+
   const scriptPath = path.join("./scripts", scriptFilename);
 
   // Check if the script exists in the cached options
@@ -33,8 +46,8 @@ app.post("/:scriptFilename.json", (req, res) => {
 
   // Prepare the script arguments from the query parameters
   const args = [];
-  for (const option of cachedScriptOptions[scriptFilename]) {
-    const value = req.query[option.alias];
+  for (const option of cachedScriptOptions[scriptFilename].options) {
+    const value = req.query?.[option.alias] || req.body?.[option.alias];
     if (value) {
       args.push(`--${option.alias}`, value);
     }
