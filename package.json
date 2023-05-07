@@ -1,0 +1,12 @@
+{
+  "name": "trigg-webscripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:christiangenco/trigg-webscripts.git",
+  "author": "Christian Genco <christian@gen.co>",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1373.0",
+    "yargs": "^17.7.2"
+  }
+}
