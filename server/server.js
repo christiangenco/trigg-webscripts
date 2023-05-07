@@ -28,13 +28,15 @@ app.use((req, res, next) => {
   }
 })();
 
+// serve the react app too
+app.use(express.static(path.join(__dirname, "build")));
+
 app.get("/commands.json", (req, res) => {
   res.json(cachedScriptOptions);
 });
 
 app.post("/:scriptFilename.json", (req, res) => {
   const { scriptFilename } = req.params;
-  console.log({ body: req.body, query: req.query });
 
   const scriptPath = path.join("./scripts", scriptFilename);
 

@@ -11,8 +11,8 @@ import {
 import Tabs from "./Tabs";
 import Form from "./Form";
 
-// const serverUrl = "http://localhost:4031";
-const serverUrl = document.location.origin;
+const serverUrl = "http://localhost:4031";
+// const serverUrl = document.location.origin;
 
 function ScriptRunner({ script }) {
   const { options } = script;
@@ -71,6 +71,9 @@ const DynamicContent = ({ scripts }) => {
 function App() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname.replace("/", "");
+
   const [scripts, setScripts] = useState({});
   const tabs = Object.keys(scripts).map((key) => {
     return { id: key, name: key, path: key };
@@ -80,7 +83,12 @@ function App() {
     // id, name, path
     fetch(`${serverUrl}/commands.json`)
       .then((res) => res.json())
-      .then((data) => setScripts(data))
+      .then((data) => {
+        setScripts(data);
+        if (!currentPath) {
+          navigate(Object.keys(data)[0]);
+        }
+      })
       .catch((err) => {
         console.log("caught fetch error");
         setError(err.message);
