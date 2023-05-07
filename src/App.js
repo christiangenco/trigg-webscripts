@@ -15,6 +15,7 @@ const serverUrl = "http://localhost:4031";
 
 function ScriptRunner({ script }) {
   const { options } = script;
+  const [result, setResult] = useState({});
 
   return (
     <div>
@@ -30,9 +31,28 @@ function ScriptRunner({ script }) {
             body: JSON.stringify(args),
           });
           const { stdout, stderr, exitCode } = await res.json();
-          console.log({ stdout, stderr, exitCode });
+          setResult({ stdout, stderr, exitCode });
         }}
       />
+
+      {result.stdout && (
+        <pre
+          className={
+            "mt-4 font-mono bg-gray-900 text-green-400 p-4 rounded-lg overflow-scroll"
+          }
+        >
+          {result.stdout}
+        </pre>
+      )}
+      {result.stderr && (
+        <pre
+          className={
+            "mt-4 font-mono bg-gray-900 text-red-400 p-4 rounded-lg overflow-scroll"
+          }
+        >
+          {result.stderr}
+        </pre>
+      )}
     </div>
   );
 }
