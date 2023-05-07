@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 // serve the react app too
 app.use(express.static(path.join(__dirname, "build")));
 
-app.get(":scriptName", (req, res) => {
+app.get("/:scriptName.js", (req, res) => {
   // serve index.html
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
